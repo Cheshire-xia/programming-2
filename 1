@@ -1,0 +1,148 @@
+public class Student {  
+    private String studentID;  
+    private String studentName;  
+    private int age;  
+    private char gender;  
+    private int grade;  
+    private String yearOfAdmission;  
+    private String yearOfGraduation;  
+   
+    public Student(String studentID, String studentName, int age, char gender, int grade, String yearOfAdmission, String yearOfGraduation) {  
+        this.studentID = studentID;  
+        this.studentName = studentName;  
+        this.age = age;  
+        this.gender = gender;  
+        this.grade = grade;  
+        this.yearOfAdmission = yearOfAdmission;  
+        this.yearOfGraduation = yearOfGraduation;  
+    }  
+  
+    @Override  
+    public String toString() {  
+        return "Student{" +  
+                "studentID='" + studentID + '\'' +  
+                ", studentName='" + studentName + '\'' +  
+                ", age=" + age +  
+                ", gender=" + gender +  
+                ", grade=" + grade +  
+                ", yearOfAdmission='" + yearOfAdmission + '\'' +  
+                ", yearOfGraduation='" + yearOfGraduation + '\'' +  
+                '}';  
+    }  
+
+import java.io.BufferedReader;  
+import java.io.FileReader;  
+import java.io.IOException;  
+import java.util.ArrayList;  
+import java.util.List;  
+  
+public class StudentCollection {  
+    private List<Student> students;  
+  
+    public StudentCollection() {  
+        this.students = new ArrayList<>();  
+    }  
+  
+    public List<Student> getStudents() {  
+        return students;  
+    }  
+  
+    public void addStudents(String filePath) {  
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {  
+            String line;  
+            while ((line = br.readLine()) != null) {  
+                String[] values = line.split(",");  
+                Student student = new Student(values[0], values[1], Integer.parseInt(values[2]), values[3].charAt(0), Integer.parseInt(values[4]), values[5], values[6]);  
+                students.add(student);  
+            }  
+        } catch (IOException e) {  
+            e.printStackTrace();  
+        }  
+    }  
+  
+    @Override  
+    public String toString() {  
+        return students.toString();  
+    }  
+}import java.util.List;  
+import java.util.Scanner;  
+  
+public class StudentOperation {  
+    private List<Student> students;  
+  
+    public StudentOperation(List<Student> students) {  
+        this.students = students;  
+    }  
+  
+    public void addStudent() {  
+        Scanner scanner = new Scanner(System.in);  
+    }  
+  
+    public void removeStudent() {  
+        Scanner scanner = new Scanner(System.in);  
+        System.out.println("ID：");  
+        String studentID = scanner.nextLine();    
+    }  
+
+import java.io.BufferedWriter;  
+import java.io.FileWriter;  
+import java.io.IOException;  
+import java.util.List;  
+  
+public class Graduates {  
+    public static void printGraduates(List<Student> students) {  
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("GraduateStudents.txt"))) {  
+            bw.write("students：\n");  
+            for (Student student : students) {  
+                if (student.getYearOfGraduation() != null && !student.getYearOfGraduation().isEmpty()) {  
+                    bw.write(student.getStudentID() + "\n");  
+                }  
+            }  
+        } catch (IOException e) {  
+            e.printStackTrace();  
+        }  
+    }  
+}
+
+import java.util.Scanner;  
+  
+public class Main {  
+    public static void main(String[] args) {  
+        StudentCollection studentCollection = new StudentCollection();  
+        studentCollection.addStudents("StudentDetails.csv");  
+        StudentOperation studentOperation = new StudentOperation(studentCollection.getStudents());  
+        Scanner scanner = new Scanner(System.in);  
+  
+        while (true) {  
+            System.out.println("choose：1.view all student information 2.add new student 3.search 4.update 5.delete 6.print graduate information 7.exit");  
+            int choice = scanner.nextInt();  
+            scanner.nextLine();  
+  
+            switch (choice) {  
+                case 1:  
+                    System.out.println(studentCollection);  
+                    break;  
+                case 2:  
+                    studentOperation.addStudent();  
+                    break;  
+                case 3:  
+                    studentOperation.searchStudentByID();  
+                    break;  
+                case 4:  
+                    studentOperation.updateStudentDetails();  
+                    break;  
+                case 5:  
+                    studentOperation.removeStudent();  
+                    break;  
+                case 6:  
+                    Graduates.printGraduates(studentCollection.getStudents());  
+                    break;  
+                case 7:  
+                    System.out.println("exit");  
+                    return;  
+                default:  
+                    System.out.println("no use");  
+            }  
+        }  
+    }  
+}
